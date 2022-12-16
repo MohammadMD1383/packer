@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
+set(CMAKE_INSTALL_PREFIX $ENV{HOME})
 project(packer)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -17,5 +18,5 @@ add_executable(unpack unpack.cpp)
 install(
 	TARGETS pack unpack
 	CONFIGURATIONS Release
-	RUNTIME DESTINATION $HOME/bin
+	RUNTIME DESTINATION bin
 )
