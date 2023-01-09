@@ -4,6 +4,7 @@ project(packer)
 set(CMAKE_CXX_STANDARD 20)
 
 if (DEFINED WINDOWS)
+	add_definitions(-DWINDOWS)
 	set(CMAKE_EXECUTABLE_SUFFIX .exe)
 	set(CMAKE_INSTALL_PREFIX build.win)
 	
