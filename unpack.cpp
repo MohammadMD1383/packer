@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <map>
 #include <boost/program_options.hpp>
@@ -29,6 +30,7 @@ int main(int argc, char **argv) {
 		("help,h", "produce this help message")
 		("version,v", "show version information")
 		("verbose,V", "print all logs to console")
+		("print,p", "if specified, will print contents of the package")
 		("input", value<string>()->required(), "input file");
 	
 	positional_options_description args;
@@ -72,10 +74,12 @@ int main(int argc, char **argv) {
 	uint64_t filesCount;
 	inputFile.read(reinterpret_cast<char *>(&filesCount), sizeof filesCount);
 	
+	auto maxLength = 0;
 	FileInfo fi{};
 	map<path, uint64_t> outputs;
-	for (uint64_t i = 0 ; i < filesCount ; ++i) {
+	for (uint64_t i = 0; i < filesCount; ++i) {
 		inputFile >> fi;
+		maxLength = max(maxLength, static_cast<decltype(maxLength)>(fi.nameSize));
 		auto buffer = new char[fi.nameSize + 1];
 		inputFile.read(buffer, fi.nameSize);
 		buffer[fi.nameSize] = 0;
@@ -83,7 +87,18 @@ int main(int argc, char **argv) {
 		delete[] buffer;
 	}
 	
-	VERBOSE INFO("preparing for output");
+	if (vmap.contains("print")) {
+		for (const auto &output: outputs)
+			cout << left
+			     << setw(maxLength) << output.first.string()
+			     << " | "
+			     << setw(20) << output.second << " bytes"
+			     << endl;
+		
+		return 0;
+	}
+	
+	VERBOSE INFO_MSG("preparing for output");
 	auto buffer = new char[BUFFER_SIZE];
 	for (const auto &item: outputs) {
 		goto next_file_end;
