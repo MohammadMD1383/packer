@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 	VERBOSE INFO("checking input file");
 	path inputFilePath{vmap["input"].as<string>()};
 	if (!exists(inputFilePath)) {
-		ERROR("input file '" << inputFilePath.c_str() << "' doesn't exist");
+		ERROR("input file '" << inputFilePath.string() << "' doesn't exist");
 		return -1;
 	}
 	
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 		const auto &fileSize = item.second;
 		
 		if (exists(filePath)) {
-			WARNING("output file '" << filePath.c_str() << "' exists; overwrite it? [y/n]");
+			WARNING("output file '" << filePath.string() << "' exists; overwrite it? [y/n]");
 			loop {
 				switch (readKey()) {
 					case 'y':
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 		ofstream outputFile{filePath.c_str(), ios::binary | ios::trunc};
 		auto tmpSize = fileSize;
 		
-		VERBOSE INFO("unpacking file '" << filePath.c_str() << "'");
+		VERBOSE INFO("unpacking file '" << filePath.string() << "'");
 		loop {
 			if (tmpSize <= BUFFER_SIZE) {
 				inputFile.read(buffer, tmpSize);

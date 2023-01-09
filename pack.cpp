@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 	path outputFilePath{vmap["output"].as<string>()};
 	
 	if (exists(outputFilePath)) {
-		WARNING("output file '" << outputFilePath.c_str() << "' exists; overwrite it? [y/n]");
+		WARNING("output file '" << outputFilePath.string() << "' exists; overwrite it? [y/n]");
 		loop {
 			switch (readKey()) {
 				case 'y':
@@ -94,11 +94,11 @@ int main(int argc, char **argv) {
 		[](const auto &item) {
 			path p{std::move(item)};
 			if (!exists(p)) {
-				ERROR("input file '" << p.c_str() << "' doesn't exist");
+				ERROR("input file '" << p.string() << "' doesn't exist");
 				exit(-2);
 			}
 			if (!is_regular_file(p)) {
-				ERROR("'" << p.c_str() << "' is not a file");
+				ERROR("'" << p.string() << "' is not a file");
 				exit(-3);
 			}
 			return p;
@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
 	auto buffer = new char[BUFFER_SIZE];
 	
 	for (const auto &item: inputFilePaths) {
-		VERBOSE INFO("packing file '" << item.c_str() << "'");
+		VERBOSE INFO("packing file '" << item.string() << "'");
 		ifstream inputFile{item.c_str(), ios::binary};
 		loop {
 			auto readAmount = inputFile.readsome(buffer, BUFFER_SIZE);

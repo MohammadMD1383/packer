@@ -1,19 +1,23 @@
 cmake_minimum_required(VERSION 3.22)
-set(CMAKE_INSTALL_PREFIX $ENV{HOME})
 project(packer)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(Boost_USE_STATIC_LIBS OFF)
-
-find_package(Boost 1.80.0 COMPONENTS program_options filesystem REQUIRED)
-
-link_libraries(Boost::program_options Boost::filesystem)
+if (DEFINED WINDOWS)
+	set(CMAKE_EXECUTABLE_SUFFIX .exe)
+	set(CMAKE_INSTALL_PREFIX build.win)
+	
+	include_directories(/fakepath/cpp-tools/boost.win.include)
+	link_directories(/fakepath/cpp-tools/boost.win/stage/lib)
+endif ()
 
 add_compile_options(-Wall -Wextra)
 
 add_executable(pack pack.cpp)
 add_executable(unpack unpack.cpp)
+
+target_link_libraries(pack boost_filesystem boost_program_options)
+target_link_libraries(unpack boost_filesystem boost_program_options)
 
 install(
 	TARGETS pack unpack
