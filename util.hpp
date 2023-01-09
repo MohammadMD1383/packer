@@ -7,6 +7,7 @@
 #include <termios.h>
 #else
 
+#include <windows.h>
 #include <conio.h>
 
 #endif
@@ -33,5 +34,40 @@ KeyboardKey readKey() {
 	return _getch();
 #endif
 }
+
+#ifdef WINDOWS
+
+void setConsoleColor(uint8_t color) {
+	static auto hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	static uint8_t defaultColor = []() {
+		CONSOLE_SCREEN_BUFFER_INFO info{};
+		GetConsoleScreenBufferInfo(hConsole, &info);
+		return info.wAttributes;
+	}();
+	
+	SetConsoleTextAttribute(hConsole, color == 0 ? defaultColor : color);
+}
+
+const char *windowsInfo() {
+	setConsoleColor(0x3F);
+	return "";
+}
+
+const char *windowsWarning() {
+	setConsoleColor(0x6F);
+	return "";
+}
+
+const char *windowsError() {
+	setConsoleColor(0x4F);
+	return "";
+}
+
+const char *windowsNormal() {
+	setConsoleColor(0);
+	return "";
+}
+
+#endif
 
 #endif //PACKER_UTIL_HPP

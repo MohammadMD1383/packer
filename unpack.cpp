@@ -56,20 +56,20 @@ int main(int argc, char **argv) {
 	try {
 		notify(vmap);
 	} catch (const wrapexcept<required_option> &e) {
-		ERROR("missing '<" << e.get_option_name().substr(2) << ">' argument");
+		ERROR_MSG("missing '<" << e.get_option_name().substr(2) << ">' argument");
 		return 1;
 	}
 	
 	auto verbose = vmap.contains("verbose");
 	
-	VERBOSE INFO("checking input file");
+	VERBOSE INFO_MSG("checking input file");
 	path inputFilePath{vmap["input"].as<string>()};
 	if (!exists(inputFilePath)) {
-		ERROR("input file '" << inputFilePath.string() << "' doesn't exist");
+		ERROR_MSG("input file '" << inputFilePath.string() << "' doesn't exist");
 		return -1;
 	}
 	
-	VERBOSE INFO("reading metadata");
+	VERBOSE INFO_MSG("reading metadata");
 	ifstream inputFile{inputFilePath.c_str(), ios::binary};
 	uint64_t filesCount;
 	inputFile.read(reinterpret_cast<char *>(&filesCount), sizeof filesCount);
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 		const auto &fileSize = item.second;
 		
 		if (exists(filePath)) {
-			WARNING("output file '" << filePath.string() << "' exists; overwrite it? [y/n]");
+			WARNING_MSG("output file '" << filePath.string() << "' exists; overwrite it? [y/n]");
 			loop {
 				switch (readKey()) {
 					case 'y':
@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
 		ofstream outputFile{filePath.c_str(), ios::binary | ios::trunc};
 		auto tmpSize = fileSize;
 		
-		VERBOSE INFO("unpacking file '" << filePath.string() << "'");
+		VERBOSE INFO_MSG("unpacking file '" << filePath.string() << "'");
 		loop {
 			if (tmpSize <= BUFFER_SIZE) {
 				inputFile.read(buffer, tmpSize);
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
 	}
 	
 	delete[] buffer;
-	INFO("done");
+	INFO_MSG("done");
 	
 	return 0;
 }
